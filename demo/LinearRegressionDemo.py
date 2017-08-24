@@ -10,7 +10,7 @@ from numpy import *
 def loadDataSet():
     dataMat = [];
     labelMat = []
-    fr = open('LR_data.txt')
+    fr = open('LinearRegressionData.txt')
     for line in fr.readlines():
         lineArr = line.strip().split()
         dataMat.append([1.0, float(lineArr[0]), float(lineArr[1])])
@@ -87,7 +87,7 @@ def data_gen():
     i = 0
     y = x
     weights = ones(3)
-    while i < 150:
+    while i < 160:
         yield y
         print(weights)
         weights = stocGradAscentFixStep(dataArr, labelMat, weights)

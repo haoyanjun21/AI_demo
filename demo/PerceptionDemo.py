@@ -102,6 +102,55 @@ def train_and_perceptron():
     return p
 
 
+import matplotlib.animation as animation
+import matplotlib.pyplot as plt
+from numpy import *
+
+
+def draw():
+    # 画图
+    dataMat, labelMat = get_training_dataset()
+    dataArr = array(dataMat)
+    xcord1 = []
+    ycord1 = []
+    xcord2 = []
+    ycord2 = []
+    n = shape(dataArr)[0]  # number of points to create
+    for i in range(n):
+        if int(labelMat[i]) == 1:
+            xcord1.append(dataArr[i, 0])
+            ycord1.append(dataArr[i, 1])
+        else:
+            xcord2.append(dataArr[i, 0])
+            ycord2.append(dataArr[i, 1])
+    fig = plt.figure()
+    plt.xlabel('X1')
+    plt.ylabel('X2')
+    ax = fig.add_subplot(111)
+    type1 = ax.scatter(xcord1, ycord1, s=10, c='red', marker='s')
+    type2 = ax.scatter(xcord2, ycord2, s=30, c='green')
+    x = arange(-1.0, 2.0, 0.1)
+    line, = ax.plot(x, x)
+
+    def data_gen():
+        i = 0
+        y = x
+        p = Perceptron(2, f)
+        while i < 5:
+            yield y
+            p._one_iteration(dataArr, labelMat, 0.1)
+            y = (-p.bias - p.weights[0] * x) / p.weights[1]
+            i += 1
+            print(p)
+
+    def update(data):
+        line.set_ydata(data)
+        return line,
+
+    ani = animation.FuncAnimation(fig, update, data_gen(), interval=1000)
+    plt.show()
+
+
 if __name__ == '__main__':
     and_perception = train_and_perceptron()
     # 打印训练获得的权重
@@ -111,52 +160,4 @@ if __name__ == '__main__':
     print('0 and 0 = %d' % and_perception.predict([0, 0]))
     print('1 and 0 = %d' % and_perception.predict([1, 0]))
     print('0 and 1 = %d' % and_perception.predict([0, 1]))
-
-# 画图
-import matplotlib.animation as animation
-import matplotlib.pyplot as plt
-from numpy import *
-
-dataMat, labelMat = get_training_dataset()
-dataArr = array(dataMat)
-xcord1 = []
-ycord1 = []
-xcord2 = []
-ycord2 = []
-n = shape(dataArr)[0]  # number of points to create
-for i in range(n):
-    if int(labelMat[i]) == 1:
-        xcord1.append(dataArr[i, 0])
-        ycord1.append(dataArr[i, 1])
-    else:
-        xcord2.append(dataArr[i, 0])
-        ycord2.append(dataArr[i, 1])
-fig = plt.figure()
-plt.xlabel('X1')
-plt.ylabel('X2')
-ax = fig.add_subplot(111)
-type1 = ax.scatter(xcord1, ycord1, s=10, c='red', marker='s')
-type2 = ax.scatter(xcord2, ycord2, s=30, c='green')
-x = arange(-1.0, 2.0, 0.1)
-line, = ax.plot(x, x)
-
-
-def data_gen():
-    i = 0
-    y = x
-    p = Perceptron(2, f)
-    while i < 10:
-        yield y
-        p._one_iteration(dataArr, labelMat, 0.1)
-        y = (-p.bias - p.weights[0] * x) / p.weights[1]
-        i += 1
-        print(p)
-
-
-def update(data):
-    line.set_ydata(data)
-    return line,
-
-
-ani = animation.FuncAnimation(fig, update, data_gen(), interval=1000)
-plt.show()
+    draw()
